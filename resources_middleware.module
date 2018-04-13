@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function resources_middleware_init()
+{
+
+    $settings = require_once __DIR__ . '/settings.php';
+    $publicDir = variable_get('file_public_path', conf_path() . '/files');
+    $escapedPublicDir = str_replace('/', '\/', preg_quote($publicDir));
+    if (preg_match("/$escapedPublicDir/", $_SERVER['REQUEST_URI']) && !file_exists(DRUPAL_ROOT . $_SERVER['REQUEST_URI'])) {
+        header('Location: ' . $settings['site_url'] . '/' . $_SERVER['REQUEST_URI']);
+        die();
+    }
+}
